@@ -8,6 +8,7 @@
 		"skipLibCheck": true,
 		"types": ["node"],
 		"moduleResolution": "node",
+		"declaration": true,
 
 		"outDir": "./dist",
 		"rootDir": "./src"

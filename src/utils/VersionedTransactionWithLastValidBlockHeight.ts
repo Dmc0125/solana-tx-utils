@@ -1,14 +1,20 @@
-import { TransactionMessage, TransactionMessageArgs, VersionedTransaction } from '@solana/web3.js'
+import {
+	AddressLookupTableAccount,
+	TransactionMessage,
+	TransactionMessageArgs,
+	VersionedTransaction,
+} from '@solana/web3.js'
 
 type Params = TransactionMessageArgs & {
 	lastValidBlockHeight: number
+	addressLookupTables?: AddressLookupTableAccount[]
 }
 
 export class VersionedTransactionWithLastValidBlockHeight extends VersionedTransaction {
 	lastValidBlockHeight: number
 
 	constructor(
-		{ lastValidBlockHeight, instructions, payerKey, recentBlockhash }: Params,
+		{ lastValidBlockHeight, instructions, payerKey, recentBlockhash, addressLookupTables }: Params,
 		signatures?: Uint8Array[],
 	) {
 		const txMessage = new TransactionMessage({
@@ -17,7 +23,7 @@ export class VersionedTransactionWithLastValidBlockHeight extends VersionedTrans
 			recentBlockhash,
 		})
 
-		super(txMessage.compileToV0Message(), signatures)
+		super(txMessage.compileToV0Message(addressLookupTables), signatures)
 		this.lastValidBlockHeight = lastValidBlockHeight
 	}
 }

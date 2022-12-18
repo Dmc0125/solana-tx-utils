@@ -1,16 +1,17 @@
 {
 	"name": "solana-tx-utils",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"main": "dist/index.js",
 	"description": "Solana transaction utilities",
 	"author": "dmc0125",
 	"type": "module",
 	"scripts": {
-		"build": "tsc",
+		"build": "rm -rf dist && tsc",
 		"build:w": "tsc -w",
 		"dev": "nodemon dist/index.js",
 		"start": "node dist/index.js",
-		"format": "prettier . --write"
+		"format": "prettier . --write",
+		"publish": "rm -rf dist && tsc && npm publish --access public"
 	},
 	"devDependencies": {
 		"@types/node": "^18.7.18",

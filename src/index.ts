@@ -5,6 +5,11 @@ export {
 	TxUnconfirmedResponse,
 	SendTransactionParams,
 } from './sendTransaction.js'
-export { VersionedTransactionWithLastValidBlockHeight } from './utils/VersionedTransactionWithLastValidBlockHeight.js'
-
+export {
+	buildAndSignTxFromInstructions,
+	buildAndSignTxFromMessageV0,
+	BuiltTransactionData,
+	BuildAndSignTxFromInstructionsParams,
+	BuildAndSignTxFromMessageV0Params,
+} from './buildTransaction.js'
 export { ParsedTransactionError } from './utils/parseTransaction.js'

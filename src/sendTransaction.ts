@@ -1,8 +1,7 @@
-import { ConfirmedTransactionMeta, Connection } from '@solana/web3.js'
+import { ConfirmedTransactionMeta, Connection, VersionedTransaction } from '@solana/web3.js'
 
 import { getTransaction } from './utils/getTransaction.js'
 import { ParsedTransactionError, parseTransactionError } from './utils/parseTransaction.js'
-import { VersionedTransactionWithLastValidBlockHeight } from './utils/VersionedTransactionWithLastValidBlockHeight.js'
 import { wait } from './utils/wait.js'
 
 const MAX_CONFIRMATION_TIME = 120_000
@@ -39,19 +38,27 @@ const watchTxConfirmation = async (
 	abortSignal: AbortSignal,
 	connection: Connection,
 	maxConfirmationTime: number,
+	log?: boolean,
 ): Promise<TxSuccessResponse | TxErrorResponse | TxUnconfirmedResponse> => {
 	while (new Date().getTime() - startTime < maxConfirmationTime && !abortSignal.aborted) {
 		const tx = await Promise.any([getTransaction(txId, connection.rpcEndpoint), wait(5000)])
 
 		if (tx?.meta?.err) {
+			const parsedError = parseTransactionError(tx, tx.meta.err)
+			if (log) {
+				console.log(`[solana-tx-utils]: Tx Error: ${parsedError}`)
+			}
 			return {
 				data: null,
-				error: parseTransactionError(tx, tx.meta.err),
+				error: parsedError,
 				status: 'ERROR',
 			}
 		}
 
 		if (tx?.meta) {
+			if (log) {
+				console.log(`[solana-tx-utils]: Tx Success`)
+			}
 			return {
 				data: tx.meta,
 				error: null,
@@ -71,21 +78,18 @@ const watchTxConfirmation = async (
 
 const watchBlockHeight = async (
 	startTime: number,
-	transaction: VersionedTransactionWithLastValidBlockHeight,
+	lastValidBlockHeight: number,
 	abortSignal: AbortSignal,
 	connection: Connection,
 	maxConfirmationTime: number,
 ): Promise<TxUnconfirmedResponse> => {
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const txValidUntilBlockHeight = transaction.lastValidBlockHeight!
-
 	while (new Date().getTime() - startTime < maxConfirmationTime && !abortSignal.aborted) {
 		let blockHeight = -1
 		try {
 			blockHeight = await connection.getBlockHeight(connection.commitment)
 		} catch (err) {}
 
-		if (blockHeight > txValidUntilBlockHeight) {
+		if (blockHeight > lastValidBlockHeight) {
 			return {
 				status: 'BLOCK_HEIGHT_EXCEEDED',
 				error: null,
@@ -104,9 +108,14 @@ const watchBlockHeight = async (
 }
 
 export type SendTransactionParams = {
-	transaction: VersionedTransactionWithLastValidBlockHeight
+	transaction: VersionedTransaction
+	lastValidBlockHeight: number
 	connection: Connection
+}
+
+export type SendTransactionConfig = {
 	maxConfirmationTime?: number
+	log?: boolean
 }
 
 /**
@@ -118,28 +127,30 @@ export type SendTransactionParams = {
  *   - `status = TIMEOUT` - Tx was not confirmed in specified time, can be sent again without changes
  *   - `status = BLOCK_HEIGHT_EXCEEDED` - Tx was not confirmed and can not be confirmed anymore without updating block hash and block height
  */
-export const sendTransaction = async ({
-	transaction,
-	connection,
-	maxConfirmationTime = MAX_CONFIRMATION_TIME,
-}: SendTransactionParams) => {
+export const sendTransaction = async (
+	{ transaction, lastValidBlockHeight, connection }: SendTransactionParams,
+	config?: SendTransactionConfig,
+) => {
 	const rawTx = transaction.serialize()
 	const txId = await connection.sendRawTransaction(rawTx, {
 		maxRetries: 20,
 		skipPreflight: true,
 	})
-	console.log(`[solana-tx-utils]: Sending tx with id: ${txId}`)
+	if (config?.log) {
+		console.log(`[solana-tx-utils]: Sending tx with id: ${txId}`)
+	}
 	const startTime = new Date().getTime()
+	const _maxConfTime = config?.maxConfirmationTime || MAX_CONFIRMATION_TIME
 
 	const abortController = new AbortController()
 	const response = await Promise.any([
-		watchTxConfirmation(startTime, txId, abortController.signal, connection, maxConfirmationTime),
+		watchTxConfirmation(startTime, txId, abortController.signal, connection, _maxConfTime),
 		watchBlockHeight(
 			startTime,
-			transaction,
+			lastValidBlockHeight,
 			abortController.signal,
 			connection,
-			maxConfirmationTime,
+			_maxConfTime,
 		),
 	])
 	abortController.abort()

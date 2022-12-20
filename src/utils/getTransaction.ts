@@ -1,5 +1,16 @@
 import { ConfirmedTransactionMeta, TransactionVersion } from '@solana/web3.js'
-import fetch from 'node-fetch'
+
+let _fetch: typeof import('node-fetch').default
+
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+if (globalThis.fetch) {
+	// @ts-ignore
+	_fetch = globalThis.fetch
+	/* eslint-enable @typescript-eslint/ban-ts-comment */
+} else {
+	_fetch = (await import('node-fetch')).default
+}
 
 export type AddressTableLookup = {
 	accountKey: string
@@ -45,7 +56,7 @@ type RPCRequestResponse<T> = {
 export const getTransaction = async (txId: string, rpcUrl: string) => {
 	try {
 		const res = (await (
-			await fetch(rpcUrl, {
+			await _fetch(rpcUrl, {
 				method: 'POST',
 				body: JSON.stringify({
 					jsonrpc: '2.0',

@@ -144,7 +144,14 @@ export const sendTransaction = async (
 
 	const abortController = new AbortController()
 	const response = await Promise.any([
-		watchTxConfirmation(startTime, txId, abortController.signal, connection, _maxConfTime),
+		watchTxConfirmation(
+			startTime,
+			txId,
+			abortController.signal,
+			connection,
+			_maxConfTime,
+			config?.log,
+		),
 		watchBlockHeight(
 			startTime,
 			lastValidBlockHeight,

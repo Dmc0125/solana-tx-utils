@@ -8,8 +8,8 @@ import {
 	TransactionMessage,
 	VersionedTransaction,
 } from '@solana/web3.js'
-import { assert } from './utils/assert.js'
 
+import { assert } from './utils/assert.js'
 import { wait } from './utils/wait.js'
 
 const fetchBlockHash = async (

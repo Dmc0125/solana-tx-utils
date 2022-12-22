@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"lib": ["ES2021"],
+		"lib": ["ES2021", "DOM"],
 		"target": "esnext",
 		"module": "ESNext",
 		"strict": true,
@@ -10,7 +10,8 @@
 		"moduleResolution": "node",
 		"declaration": true,
 
-		"outDir": "./dist",
-		"rootDir": "./src"
+		"outDir": "./dist/js",
+		"rootDir": "./src",
+		"declarationDir": "dist/types"
 	}
 }

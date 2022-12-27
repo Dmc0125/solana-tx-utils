@@ -29,15 +29,40 @@ const fetchBlockHash = async (
 	}
 }
 
+export type BuildTransactionParams = {
+	instructions: TransactionInstruction[]
+	addressLookupTables?: AddressLookupTableAccount[]
+	payerKey: PublicKey
+}
+
+/**
+ * Fetches block hash and builds V0 transaction
+ */
+export const buildTransaction = async (
+	{ instructions, addressLookupTables, payerKey }: BuildTransactionParams,
+	connection: Connection,
+) => {
+	const { blockhash, lastValidBlockHeight } = await fetchBlockHash(connection)
+
+	const txMessage = new TransactionMessage({
+		instructions,
+		payerKey,
+		recentBlockhash: blockhash,
+	}).compileToV0Message(addressLookupTables)
+
+	return {
+		transaction: new VersionedTransaction(txMessage),
+		lastValidBlockHeight,
+	}
+}
+
 export type BuiltTransactionData = {
 	transaction: VersionedTransaction
 	lastValidBlockHeight: number
 }
 
-export type BuildAndSignTxFromInstructionsParams = {
+export type BuildAndSignTxFromInstructionsParams = Omit<BuildTransactionParams, 'payerKey'> & {
 	signers: Signer[]
-	instructions: TransactionInstruction[]
-	addressLookupTables?: AddressLookupTableAccount[]
 	payerKey?: PublicKey
 }
 
@@ -57,20 +82,17 @@ export const buildAndSignTxFromInstructions = async (
 
 	const _payerKey = payerKey || signers[0].publicKey
 
-	const { blockhash, lastValidBlockHeight } = await fetchBlockHash(connection)
-	const txMessage = new TransactionMessage({
-		instructions,
-		payerKey: _payerKey,
-		recentBlockhash: blockhash,
-	}).compileToV0Message(addressLookupTables)
+	const txData = await buildTransaction(
+		{
+			instructions,
+			addressLookupTables,
+			payerKey: _payerKey,
+		},
+		connection,
+	)
+	txData.transaction.sign(signers)
 
-	const tx = new VersionedTransaction(txMessage)
-	tx.sign(signers)
-
-	return {
-		transaction: tx,
-		lastValidBlockHeight,
-	}
+	return txData
 }
 
 export type BuildAndSignTxFromMessageV0Params = {

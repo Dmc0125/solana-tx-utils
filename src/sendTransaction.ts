@@ -46,7 +46,7 @@ const watchTxConfirmation = async (
 		if (tx?.meta?.err) {
 			const parsedError = parseTransactionError(tx, tx.meta.err)
 			if (log) {
-				console.log(`[solana-tx-utils]: Tx Error: ${parsedError}`)
+				console.log('[solana-tx-utils]: Tx Error:', parsedError)
 			}
 			return {
 				data: null,

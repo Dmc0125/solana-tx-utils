@@ -6,9 +6,11 @@ export {
 	SendTransactionParams,
 } from './sendTransaction.js'
 export {
+	buildTransaction,
 	buildAndSignTxFromInstructions,
 	buildAndSignTxFromMessageV0,
 	BuiltTransactionData,
+	BuildTransactionParams,
 	BuildAndSignTxFromInstructionsParams,
 	BuildAndSignTxFromMessageV0Params,
 } from './buildTransaction.js'

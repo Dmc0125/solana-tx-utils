@@ -1,10 +1,9 @@
 {
 	"name": "solana-tx-utils",
-	"version": "0.0.9",
-	"main": "dist/js/index.js",
-	"types": "dist/types",
+	"version": "0.0.10",
+	"main": "dist/index.js",
 	"browser": {
-		"dist/js/index.js": "dist/js/index.browser.js"
+		"dist/index.js": "dist/index.browser.js"
 	},
 	"description": "Solana transaction utilities",
 	"author": "dmc0125",

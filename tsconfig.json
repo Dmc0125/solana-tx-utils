@@ -10,8 +10,7 @@
 		"moduleResolution": "node",
 		"declaration": true,
 
-		"outDir": "./dist/js",
-		"rootDir": "./src",
-		"declarationDir": "dist/types"
+		"outDir": "./dist",
+		"rootDir": "./src"
 	}
 }

@@ -5,9 +5,14 @@
 	"browser": {
 		"dist/index.js": "dist/index.browser.js"
 	},
+	"keywords": ["helpers", "utilities", "solana", "transaction", "confirmation", "parsing"],
 	"description": "Solana transaction utilities",
 	"author": "dmc0125",
 	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Dmc0125/solana-tx-utils"
+	},
 	"scripts": {
 		"build": "rm -rf dist && tsc && prettier . --write",
 		"build:w": "tsc -w",

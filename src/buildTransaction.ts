@@ -36,7 +36,7 @@ export type BuildTransactionParams = {
 }
 
 /**
- * Fetches block hash and builds V0 transaction
+ * Fetches block hash and builds unsigned V0 transaction
  */
 export const buildTransaction = async (
 	{ instructions, addressLookupTables, payerKey }: BuildTransactionParams,

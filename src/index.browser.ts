@@ -12,7 +12,7 @@ export {
 	TxErrorResponse,
 	TxSuccessResponse,
 	TxUnconfirmedResponse,
-} from './confirmTransaction'
+} from './confirmTransaction.js'
 export {
 	buildTransaction,
 	buildAndSignTxFromInstructions,

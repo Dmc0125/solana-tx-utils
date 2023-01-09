@@ -1,11 +1,18 @@
 {
 	"name": "solana-tx-utils",
-	"version": "0.0.10",
+	"version": "0.0.11",
 	"main": "dist/index.js",
 	"browser": {
 		"dist/index.js": "dist/index.browser.js"
 	},
-	"keywords": ["helpers", "utilities", "solana", "transaction", "confirmation", "parsing"],
+	"keywords": [
+		"helpers",
+		"utilities",
+		"solana",
+		"transaction",
+		"confirmation",
+		"parsing"
+	],
 	"description": "Solana transaction utilities",
 	"author": "dmc0125",
 	"type": "module",

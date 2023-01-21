@@ -21,7 +21,7 @@ npm i @solana/web3.js
 ```js
 // Create connection, and wallet
 import { Connection, SystemProgram } from '@solana/web3.js'
-import { buildAndSignTxFromInstructions, sendTransaction } from 'solana-tx-utils'
+import { buildAndSignTxFromInstructions, sendAndConfirmTransaction } from 'solana-tx-utils'
 
 const connection = new Connection('<RPC_URL>', options)
 const wallet = new Keypair()
@@ -51,7 +51,7 @@ console.log(txData)
 */
 
 // Send and confirm signed transaction
-const res = await sendTransaction({
+const res = await sendAndConfirmTransaction({
   ...txData,
   connection,
 })
@@ -84,13 +84,23 @@ If transaction was confirmed and resulted in error
 - Confirm transaction based on txId
 
 ```js
-import { confirmTransaction } from 'solana-tx-utils'
+import { confirmTransaction, sendTransaction } from 'solana-tx-utils'
 
-const res = confirmTransaction({
-	txId: '...',
+const res = await sendAndConfirmTransaction({
+	...txData,
 	connection,
-	lastValidBlockHeight,
 })
+
+const res = confirmTransaction(
+	{
+		txId: '...',
+		connection,
+		lastValidBlockHeight,
+	},
+	{
+		method: 'websocket', // It's possible to chose between websockets/polling for confirming transaction
+	},
+)
 
 console.log(res)
 /*
@@ -112,4 +122,33 @@ If transaction was confirmed and resulted in error
   data: null
   error: ParsedTransactionError
 */
+```
+
+## Local development
+
+- Install [Solana cli tools](https://docs.solana.com/cli/install-solana-cli-tools)
+
+```sh
+solana-keygen new
+```
+
+- If you are running test validator on port different from 8899
+- Create .env file in /tests directory
+
+```env
+RPC_URL_PORT=<port>
+```
+
+</br>
+
+- Run tests
+
+```sh
+pnpm validator
+```
+
+```sh
+pnpm test
+# or
+pnpm test:w
 ```

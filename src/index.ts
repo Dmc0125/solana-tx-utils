@@ -4,21 +4,23 @@ import fetch from 'node-fetch'
 // @ts-ignore
 global.fetch = fetch
 
+export { DEFAULT_SEND_OPTIONS, SendTransactionParams, sendTransaction } from './sendTransaction.js'
 export {
-	DEFAULT_SEND_OPTIONS,
-	sendTransaction,
-	SendTransactionParams,
-	SendTransactionConfig,
-	SendTransactionResponse,
-} from './sendTransaction.js'
+	sendAndConfirmTransaction,
+	SendAndConfirmTransactionParams,
+	SendAndConfirmTransactionConfig,
+	SendAndConfirmTransactionResponse,
+} from './sendAndConfirmTransaction.js'
 export {
 	DEFAULT_MAX_CONFIRMATION_TIME,
 	confirmTransaction,
 	ConfirmTransactionParams,
+} from './confirmTransaction.js'
+export {
 	TxErrorResponse,
 	TxSuccessResponse,
 	TxUnconfirmedResponse,
-} from './confirmTransaction.js'
+} from './confirm-transaction/types.js'
 export {
 	buildTransaction,
 	buildAndSignTxFromInstructions,

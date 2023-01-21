@@ -1,4 +1,4 @@
-import { ConfirmedTransactionMeta, TransactionVersion } from '@solana/web3.js'
+import { ConfirmedTransactionMeta, TransactionVersion, Commitment } from '@solana/web3.js'
 
 export type AddressTableLookup = {
 	accountKey: string
@@ -41,7 +41,13 @@ type RPCRequestResponse<T> = {
 	result: T
 }
 
-export const getTransaction = async (txId: string, rpcUrl: string) => {
+export type GetTransactionCommitment = Extract<Commitment, 'finalized' | 'confirmed'>
+
+export const getTransaction = async (
+	txId: string,
+	rpcUrl: string,
+	commitment: GetTransactionCommitment,
+) => {
 	try {
 		const res = (await (
 			await fetch(rpcUrl, {
@@ -53,7 +59,7 @@ export const getTransaction = async (txId: string, rpcUrl: string) => {
 					params: [
 						txId,
 						{
-							commitment: 'confirmed',
+							commitment,
 							maxSupportedTransactionVersion: 0,
 						},
 					],

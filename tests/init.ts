@@ -12,8 +12,11 @@ export const connection = new Connection(TEST_RPC_URL)
 
 const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
 const txId = await connection.requestAirdrop(wallet.publicKey, 500 * 10 ** 9)
-await connection.confirmTransaction({
-  signature: txId,
-  blockhash,
-  lastValidBlockHeight,
-}, 'finalized')
+await connection.confirmTransaction(
+	{
+		signature: txId,
+		blockhash,
+		lastValidBlockHeight,
+	},
+	'finalized',
+)

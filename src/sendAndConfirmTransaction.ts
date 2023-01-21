@@ -43,7 +43,7 @@ export type SendAndConfirmTransactionResponse = {
  * Transaction is confirmed based on:
  *  - *Block height* - comparison of `current block height` and `last valid block height` for transaction
  *  - *Time* - checking if the tx is confirmed in allowed time window
- * 
+ *
  * @returns Transaction id, status, data (tx metadata) and error
  *   - `status = SUCCESS` - Tx was executed successfully
  *   - `status = ERROR` - Tx failed with some error

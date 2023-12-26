@@ -40,7 +40,7 @@ const txData = await buildAndSignTxFromInstructions({
   signers: [wallet],
   instructions,
   addressLookupTables,
-})
+}, connection)
 
 console.log(txData)
 /*
@@ -98,7 +98,7 @@ const res = confirmTransaction(
 		lastValidBlockHeight,
 	},
 	{
-		method: 'websocket', // It's possible to chose between websockets/polling for confirming transaction
+		method: 'websocket', // It's possible to choose between websockets/polling for confirming transaction
 	},
 )
 
